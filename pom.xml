@@ -1,0 +1,136 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.w2a</groupId>
+	<artifactId>DataDrivenFramework</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+
+
+	<properties>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+
+
+	</properties>
+
+
+	<dependencies>
+		
+		
+
+		<!-- https://mvnrepository.com/artifact/org.testng/testng -->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>7.9.0</version>
+			<scope>test</scope>
+		</dependency>
+
+
+
+			<!--
+		https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.16.1</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
+		<dependency>
+			<groupId>com.aventstack</groupId>
+			<artifactId>extentreports</artifactId>
+			<version>5.1.1</version>
+		</dependency>
+
+
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.20.0</version> <!-- or latest -->
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.20.0</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail -->
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.15.1</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.14</version>
+		</dependency>
+
+
+		<!-- Dependency for POI API -->
+		<!-- http://mvnrepository.com/artifact/org.apache.poi/poi -->
+		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>2.1.4</version> <!-- or latest -->
+		</dependency>
+
+		<!-- http://mvnrepository.com/artifact/dom4j/dom4j -->
+		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>2.1.4</version> <!-- or latest -->
+		</dependency>
+
+
+		<!-- http://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans -->
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+
+		<!-- http://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml-schemas</artifactId>
+			<version>3.6</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<configuration>
+					<testFailureIgnore> false </testFailureIgnore>
+					<suiteXmlFiles>
+						<suiteXmlFile>src/test/resources/runner/testng.xml</suiteXmlFile>
+
+					</suiteXmlFiles>
+				</configuration>
+
+			</plugin>
+		</plugins>
+
+	</build>
+
+</project>
