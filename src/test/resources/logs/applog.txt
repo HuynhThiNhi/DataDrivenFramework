@@ -1,2 +1,0 @@
-2025-10-02 15:56:11 INFO  com.w2a.base.TestBase - Start setup test module
-2025-10-02 15:56:14 INFO  com.w2a.base.TestBase - LoginTest: Start executing BankManagerLoginTest

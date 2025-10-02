@@ -11,6 +11,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -95,18 +96,16 @@ public class TestBase {
 
 	public boolean isElementPresent(By by) {
 
-//		try {
-//
-//			driver.findElement(by);
-//			return true;
-//
-//		} catch (NoSuchElementException e) {
-//
-//			return false;
-//
-//		}
-        return true;
+		try {
 
+			driver.findElement(by);
+			return true;
+
+		} catch (NoSuchElementException e) {
+			logger.error("No such element: ", e);
+			return false;
+
+		}
 	}
 
 	public static void verifyEquals(String expected, String actual) throws IOException {
