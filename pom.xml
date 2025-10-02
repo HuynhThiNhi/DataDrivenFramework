@@ -129,8 +129,10 @@
 					<testFailureIgnore> false </testFailureIgnore>
 					<suiteXmlFiles>
 						<suiteXmlFile>src/test/resources/runner/testng.xml</suiteXmlFile>
-
 					</suiteXmlFiles>
+					<systemPropertyVariables>
+						<log4j.configurationFile>properties/log4j2.properties</log4j.configurationFile>
+					</systemPropertyVariables>
 				</configuration>
 
 			</plugin>

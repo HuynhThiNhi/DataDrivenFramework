@@ -8,6 +8,8 @@ import java.time.Duration;
 import java.util.Properties;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,7 +23,7 @@ public class TestBase {
 	//again test2
 	/*
 	 * WebDriver - done Properties - done Logs - log4j jar, .log,
-	 * log4j.properties, Logger ExtentReports DB Excel Mail ReportNG,
+	 * log4j2.properties, Logger ExtentReports DB Excel Mail ReportNG,
 	 * ExtentReports Jenkins
 	 *
 	 */
@@ -30,12 +32,14 @@ public class TestBase {
     public static Properties config = new Properties();
     public static Properties OR = new Properties();
     public static FileInputStream fis;
+	public static Logger logger = LogManager.getLogger(TestBase.class);
 
 	@BeforeSuite
 	public void setUp() {
+		logger.info("Start setup test module");
         if (driver == null) {
             try {
-                FileInputStream fis = new FileInputStream(System.getProperty("user.dir").concat("/src/test/resources/properties/Config.properties"));
+                fis = new FileInputStream(System.getProperty("user.dir").concat("/src/test/resources/properties/Config.properties"));
                 config.load(fis);
 
 				fis = new FileInputStream(System.getProperty("user.dir").concat("/src/test/resources/properties/OR.properties"));
