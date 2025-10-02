@@ -3,11 +3,15 @@ package com.w2a.base;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.DriverManager;
+import java.time.Duration;
 import java.util.Properties;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
@@ -31,13 +35,20 @@ public class TestBase {
 	public void setUp() {
         if (driver == null) {
             try {
-                Properties config = new Properties();
-                Properties OR = new Properties();
                 FileInputStream fis = new FileInputStream(System.getProperty("user.dir").concat("/src/test/resources/properties/Config.properties"));
                 config.load(fis);
 
-                fis = new FileInputStream(System.getProperty("user.dir").concat("/src/test/resources/properties/OR.properties"));
-                OR.load(fis);
+				fis = new FileInputStream(System.getProperty("user.dir").concat("/src/test/resources/properties/OR.properties"));
+				OR.load(fis);
+
+				if (config.getProperty("browser").equalsIgnoreCase("chrome")) {
+					WebDriverManager.chromedriver().setup();
+					driver = new ChromeDriver();
+				}
+
+				driver.manage().window().fullscreen();
+				driver.get(config.getProperty("testsiteurl"));
+				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Integer.parseInt(config.getProperty("implicit.wait"))));
             }
             catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -117,13 +128,13 @@ public class TestBase {
 
 	}
 
-	@AfterSuite
+	@AfterSuite(alwaysRun = true)
 	public void tearDown() {
 //
-//		if (driver != null) {
-//			driver.quit();
-//		}
-//
+		if (driver != null) {
+			driver.quit();
+		}
+
 //		log.debug("test execution completed !!!");
 	}
 }
