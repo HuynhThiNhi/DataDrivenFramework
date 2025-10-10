@@ -104,19 +104,55 @@
 		</dependency>
 
 
-		<!-- http://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans -->
+		<!-- Core Apache POI -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.2.5</version>
+		</dependency>
+
+		<!-- For .xlsx files (XSSF) -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.5</version>
+		</dependency>
+
+		<!-- Optional: if you need date/time or OOXML schemas -->
 		<dependency>
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
-			<version>2.3.0</version>
+			<version>5.1.1</version>
 		</dependency>
 
-		<!-- http://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas -->
+		<!-- ReportNG Dependencies -->
 		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml-schemas</artifactId>
-			<version>3.6</version>
+			<groupId>org.uncommons</groupId>
+			<artifactId>reportng</artifactId>
+			<version>1.1.4</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.testng</groupId>
+					<artifactId>testng</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
+		<!-- Velocity Engine for ReportNG -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-engine-core</artifactId>
+			<version>2.3</version>
+		</dependency>
+
+		<!-- Guice for ReportNG -->
+		<dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>4.2.3</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -133,6 +169,17 @@
 					<systemPropertyVariables>
 						<log4j.configurationFile>properties/log4j2.properties</log4j.configurationFile>
 					</systemPropertyVariables>
+					<!-- ReportNG Configuration -->
+<!--					<properties>-->
+<!--						<property>-->
+<!--							<name>listener</name>-->
+<!--							<value>org.uncommons.reportng.HTMLReporter,org.uncommons.reportng.JUnitXMLReporter</value>-->
+<!--						</property>-->
+<!--					</properties>-->
+<!--					<argLine>-->
+<!--						-Dorg.uncommons.reportng.escape-output=false-->
+<!--						-Dorg.uncommons.reportng.title=Data Driven Framework Test Report-->
+<!--					</argLine>-->
 				</configuration>
 
 			</plugin>

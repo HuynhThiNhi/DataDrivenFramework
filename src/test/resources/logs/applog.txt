@@ -1,0 +1,33 @@
+2025-10-10 17:17:02 INFO  com.w2a.base.TestBase - Start setup test module
+2025-10-10 17:17:05 INFO  com.w2a.base.TestBase - Starting Add Customer test for: Raman Arora
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Clicked Add Customer button
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Entered first name: Raman
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Entered last name: Arora
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Entered postcode: A234wd
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Submitted customer form
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Alert text: Customer added successfully with customer id :6
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Customer added successfully: Raman Arora
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Starting Add Customer test for: Rahul Arora
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Clicked Add Customer button
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Entered first name: Rahul
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Entered last name: Arora
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Entered postcode: A234wd
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Submitted customer form
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Alert text: Customer added successfully with customer id :7
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Customer added successfully: Rahul Arora
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Starting Add Customer test for: Ishita Arora
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Clicked Add Customer button
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Entered first name: Ishita
+2025-10-10 17:17:06 INFO  com.w2a.base.TestBase - Entered last name: Arora
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Entered postcode: A234wd
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Submitted customer form
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Alert text: Customer added successfully with customer id :8
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Customer added successfully: Ishita Arora
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Starting Add Customer test for: Rohit Sehgal
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Clicked Add Customer button
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Entered first name: Rohit
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Entered last name: Sehgal
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Entered postcode: A234wd
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Submitted customer form
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Alert text: Customer added successfully with customer id :9
+2025-10-10 17:17:07 INFO  com.w2a.base.TestBase - Customer added successfully: Rohit Sehgal

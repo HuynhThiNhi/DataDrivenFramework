@@ -3,10 +3,10 @@ package com.w2a.base;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.DriverManager;
 import java.time.Duration;
 import java.util.Properties;
 
+import com.w2a.utilities.ExcelReader;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +15,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Reporter;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
@@ -34,6 +36,8 @@ public class TestBase {
     public static Properties OR = new Properties();
     public static FileInputStream fis;
 	public static Logger logger = LogManager.getLogger(TestBase.class);
+	public static ExcelReader excel = new ExcelReader(System.getProperty("user.dir") + "/src/test/resources/excel/testdata.xlsx");
+	public static WebDriverWait wait;
 
 	@BeforeSuite
 	public void setUp() {
@@ -54,6 +58,13 @@ public class TestBase {
 				driver.manage().window().fullscreen();
 				driver.get(config.getProperty("testsiteurl"));
 				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Integer.parseInt(config.getProperty("implicit.wait"))));
+				wait = new WebDriverWait(driver, Duration.ofSeconds(Integer.parseInt(config.getProperty("explicit.wait"))));
+
+	
+
+		
+			
+				
             }
             catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -64,9 +75,13 @@ public class TestBase {
 
     }
 
-	public void click(String locator) {
-
-
+	/**
+	 * Utility method to click an element using locator from OR.properties
+	 * @param locatorKey Key from OR.properties file
+	 */
+	public void click(String locatorKey) {
+		// Implementation can be added here if needed
+		// Currently using Page Object Model approach
 	}
 
 	public void type(String locator, String value) {
