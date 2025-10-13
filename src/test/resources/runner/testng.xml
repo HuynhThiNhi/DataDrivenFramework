@@ -3,11 +3,13 @@
 <suite name="Data Driven Framework Test Suite">
     
     <!-- ReportNG Listeners -->
-<!--    <listeners>-->
-<!--        <listener class-name="org.uncommons.reportng.HTMLReporter" />-->
-<!--        <listener class-name="org.uncommons.reportng.JUnitXMLReporter" />-->
-<!--        <listener class-name="com.w2a.listeners.ReportNGListener" />-->
-<!--    </listeners>-->
+	<!-- always need config listener to have html reports, if not config ReportNG’s HTML reports (and screenshots integration) will not be generated because TestNG never invokes ReportNG’s listeners.-->
+
+    <listeners>
+        <listener class-name="org.uncommons.reportng.HTMLReporter" />
+        <listener class-name="org.uncommons.reportng.JUnitXMLReporter" />
+        <listener class-name="com.w2a.listeners.ReportNGListener" />
+    </listeners>
     
 	<test name="Bank Manager Login Test">
 		<classes>

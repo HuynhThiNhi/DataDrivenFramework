@@ -14,30 +14,29 @@ public class AddCustomerTest extends TestBase {
 
     @BeforeClass
     public void loginAsManager() {
+        driver.get(config.getProperty("testsiteurl"));
         wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("bmlBtn_CSS")))).click();
     }
 
     @Test(dataProvider = "getData") 
     public void addCustomer(String firstName, String lastName, String postCode, String allertText) {
-        
-        // Log test start to ReportNG
-        TestBase.logInfo("Starting Add Customer test for: " + firstName + " " + lastName);
+
         
         try {
             // Navigate to Add Customer page
             wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("addCustBtn_CSS")))).click();
             TestBase.logInfo("Clicked Add Customer button");
-            
+
             // Fill customer form
             driver.findElement(By.cssSelector(OR.getProperty("firstname_CSS"))).sendKeys(firstName);
             TestBase.logInfo("Entered first name: " + firstName);
-            
+
             driver.findElement(By.cssSelector(OR.getProperty("lastname_CSS"))).sendKeys(lastName);
             TestBase.logInfo("Entered last name: " + lastName);
-            
+
             driver.findElement(By.cssSelector(OR.getProperty("postcode_CSS"))).sendKeys(postCode);
             TestBase.logInfo("Entered postcode: " + postCode);
-            
+
             // Submit form
             driver.findElement(By.cssSelector(OR.getProperty("addbtn_CSS"))).click();
             TestBase.logInfo("Submitted customer form");

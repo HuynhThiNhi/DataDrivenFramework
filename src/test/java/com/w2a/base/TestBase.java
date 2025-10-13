@@ -13,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Reporter;
@@ -60,11 +59,6 @@ public class TestBase {
 				driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Integer.parseInt(config.getProperty("implicit.wait"))));
 				wait = new WebDriverWait(driver, Duration.ofSeconds(Integer.parseInt(config.getProperty("explicit.wait"))));
 
-	
-
-		
-			
-				
             }
             catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -84,29 +78,14 @@ public class TestBase {
 		// Currently using Page Object Model approach
 	}
 
-	public void type(String locator, String value) {
-
-
-
-	}
-
-	static WebElement dropdown;
-
-	public void select(String locator, String value) {
-
-//		if (locator.endsWith("_CSS")) {
-//			dropdown = driver.findElement(By.cssSelector(OR.getProperty(locator)));
-//		} else if (locator.endsWith("_XPATH")) {
-//			dropdown = driver.findElement(By.xpath(OR.getProperty(locator)));
-//		} else if (locator.endsWith("_ID")) {
-//			dropdown = driver.findElement(By.id(OR.getProperty(locator)));
-//		}
-//
-//		Select select = new Select(dropdown);
-//		select.selectByVisibleText(value);
-//
-//		CustomListeners.testReport.get().log(Status.INFO, "Selecting from dropdown : " + locator + " value as " + value);
-
+	/**
+	 * Utility method to type text into an element using locator from OR.properties
+	 * @param locatorKey Key from OR.properties file
+	 * @param value Text to type
+	 */
+	public void type(String locatorKey, String value) {
+		// Implementation can be added here if needed
+		// Currently using Page Object Model approach
 	}
 
 	public boolean isElementPresent(By by) {
@@ -124,26 +103,44 @@ public class TestBase {
 	}
 
 	public static void verifyEquals(String expected, String actual) throws IOException {
+		try {
+			org.testng.Assert.assertEquals(actual, expected);
+			Reporter.log("<br><b>Verification Passed:</b> Expected: " + expected + ", Actual: " + actual + "<br>");
+		} catch (Throwable t) {
+			Reporter.log("<br><b>Verification Failed:</b> " + t.getMessage() + "<br>");
+			// Capture screenshot for ReportNG
+			if (driver != null) {
+				com.w2a.utilities.ScreenshotUtils.captureFailureScreenshot(driver, "Verification_Failed");
+			}
+			throw t;
+		}
+	}
 
-//		try {
-//
-//			Assert.assertEquals(actual, expected);
-//
-//		} catch (Throwable t) {
-//
-//			TestUtil.captureScreenshot();
-//			// ReportNG
-//			Reporter.log("<br>" + "Verification failure : " + t.getMessage() + "<br>");
-//			Reporter.log("<a target=\"_blank\" href=" + TestUtil.screenshotName + "><img src=" + TestUtil.screenshotName
-//					+ " height=200 width=200></img></a>");
-//			Reporter.log("<br>");
-//			Reporter.log("<br>");
-//			// Extent Reports
-//			CustomListeners.testReport.get().log(Status.FAIL, " Verification failed with exception : " + t.getMessage());
-//			//CustomListeners.testReport.get().log(Status.FAIL, CustomListeners.testReport.get().addScreenCaptureFromPath(TestUtil.screenshotName));
-//
-//		}
+	/**
+	 * Logs information to ReportNG
+	 * @param message Message to log
+	 */
+	public static void logInfo(String message) {
+		Reporter.log("<br><b>INFO:</b> " + message + "<br>");
+		logger.info(message);
+	}
 
+	/**
+	 * Logs error to ReportNG
+	 * @param message Error message to log
+	 */
+	public static void logError(String message) {
+		Reporter.log("<br><b style='color: red;'>ERROR:</b> " + message + "<br>");
+		logger.error(message);
+	}
+
+	/**
+	 * Logs warning to ReportNG
+	 * @param message Warning message to log
+	 */
+	public static void logWarning(String message) {
+		Reporter.log("<br><b style='color: orange;'>WARNING:</b> " + message + "<br>");
+		logger.warn(message);
 	}
 
 	@AfterSuite(alwaysRun = true)
