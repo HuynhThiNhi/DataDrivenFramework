@@ -19,7 +19,7 @@ import java.util.Date;
 public class ScreenshotUtils {
     
     private static final String SCREENSHOT_DIR = "target/surefire-reports/screenshots/";
-    private static final String RELATIVE_SCREENSHOT_DIR = "screenshots/";
+    private static final String RELATIVE_SCREENSHOT_DIR = "../surefire-reports/screenshots/";
     private static final String DATE_FORMAT = "yyyy-MM-dd_HH-mm-ss";
     
     /**

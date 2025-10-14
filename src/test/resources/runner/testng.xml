@@ -4,11 +4,12 @@
     
     <!-- ReportNG Listeners -->
 	<!-- always need config listener to have html reports, if not config ReportNG’s HTML reports (and screenshots integration) will not be generated because TestNG never invokes ReportNG’s listeners.-->
-
+	<!-- two ways to view report: using ReportNGListener or extendReport(CustomListeners), select 1 or 2 option	-->
     <listeners>
         <listener class-name="org.uncommons.reportng.HTMLReporter" />
         <listener class-name="org.uncommons.reportng.JUnitXMLReporter" />
         <listener class-name="com.w2a.listeners.ReportNGListener" />
+        <listener class-name="com.w2a.listeners.CustomListeners" />
     </listeners>
     
 	<test name="Bank Manager Login Test">
