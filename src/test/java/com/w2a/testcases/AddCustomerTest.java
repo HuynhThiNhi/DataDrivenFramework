@@ -3,6 +3,7 @@ package com.w2a.testcases;
 import com.w2a.base.TestBase;
 import com.w2a.utilities.ExtentStepLogger;
 
+import com.w2a.utilities.TestUtil;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -19,8 +20,8 @@ public class AddCustomerTest extends TestBase {
         wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("bmlBtn_CSS")))).click();
     }
 
-    @Test(dataProvider = "getData") 
-    public void addCustomer(String firstName, String lastName, String postCode, String allertText) {
+    @Test(dataProviderClass = TestUtil.class, dataProvider = "dp")
+    public void addCustomerTest(String firstName, String lastName, String postCode, String allertText) {
         
         // Log test start information
         ExtentStepLogger.logTestStart("Add Customer Test", "Test to add a new customer with provided details");
@@ -88,20 +89,20 @@ public class AddCustomerTest extends TestBase {
         }
     }
 
-    @DataProvider
-    Object[][] getData(){
-        String sheetName = "AddCustomerTest";
-        int rows = excel.getRowCount(sheetName);
-        int cols = 4; // Only need 3 columns: firstName, lastName, postCode
-        Object[][] data = new Object[rows-1][cols];
-
-        for (int r = 2; r <= rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                data[r-2][c] = excel.getCellData(sheetName, r, c);
-            }
-        }
-        return data;
-    }
+//    @DataProvider
+//    Object[][] getData(){
+//        String sheetName = "AddCustomerTest";
+//        int rows = excel.getRowCount(sheetName);
+//        int cols = 4; // Only need 3 columns: firstName, lastName, postCode
+//        Object[][] data = new Object[rows-1][cols];
+//
+//        for (int r = 2; r <= rows; r++) {
+//            for (int c = 0; c < cols; c++) {
+//                data[r-2][c] = excel.getCellData(sheetName, r, c);
+//            }
+//        }
+//        return data;
+//    }
 
     public static void main(String[] args) {
         String sheetName = "AddCustomerTest";

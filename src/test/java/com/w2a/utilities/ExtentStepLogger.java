@@ -160,7 +160,7 @@ public class ExtentStepLogger {
      * @param dataType Type of data (e.g., "Test Data", "Expected Result")
      * @param dataValue The actual data value
      */
-    public static void logTestData(String dataType, String dataValue) {
+    public static void  logTestData(String dataType, String dataValue) {
         if (getTest() != null) {
             getTest().log(Status.INFO, "<b>" + dataType + ":</b> " + dataValue);
         }

@@ -1,20 +1,20 @@
-//package com.w2a.utilities;
-//
-//import java.io.File;
-//import java.io.IOException;
-//import java.lang.reflect.Method;
-//import java.util.Date;
-//import java.util.Hashtable;
-//
-//import org.apache.commons.io.FileUtils;
-//import org.openqa.selenium.OutputType;
-//import org.openqa.selenium.TakesScreenshot;
-//import org.testng.annotations.DataProvider;
-//
-//import com.w2a.base.TestBase;
-//
-//public class TestUtil extends TestBase {
-//
+package com.w2a.utilities;//package com.w2a.utilities;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Date;
+import java.util.Hashtable;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.testng.annotations.DataProvider;
+
+import com.w2a.base.TestBase;
+
+public class TestUtil extends TestBase {
+
 //	public static String screenshotPath;
 //	public static String screenshotName;
 //
@@ -30,9 +30,22 @@
 //
 //	}
 //
-//	@DataProvider(name="dp")
-//	public Object[][] getData(Method m) {
-//
+	@DataProvider(name="dp")
+	public Object[][] getData(Method m) {
+        String sheetName = m.getName();
+        int rows = excel.getRowCount(sheetName);
+        int cols = excel.getColumnCount(sheetName);
+        if (sheetName.equalsIgnoreCase("AddCustomerTest")) {
+            cols = 4; // Only need 3 columns: firstName, lastName, postCode
+        }
+        Object[][] data = new Object[rows-1][cols];
+
+        for (int r = 2; r <= rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                data[r-2][c] = excel.getCellData(sheetName, r, c);
+            }
+        }
+
 //		String sheetName = m.getName();
 //		int rows = excel.getRowCount(sheetName);
 //		int cols = excel.getColumnCount(sheetName);
@@ -53,10 +66,10 @@
 //			}
 //
 //		}
-//
-//		return data;
-//
-//	}
+
+		return data;
+
+	}
 //
 //
 //	public static boolean isTestRunnable(String testName, ExcelReader excel){
@@ -84,4 +97,4 @@
 //		return false;
 //	}
 //
-//}
+}
