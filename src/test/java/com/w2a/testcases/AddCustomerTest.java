@@ -8,9 +8,11 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.Assert;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Hashtable;
 
 public class AddCustomerTest extends TestBase {
 
@@ -21,16 +23,20 @@ public class AddCustomerTest extends TestBase {
     }
 
     @Test(dataProviderClass = TestUtil.class, dataProvider = "dp")
-    public void addCustomerTest(String firstName, String lastName, String postCode, String allertText) {
+    public void addCustomerTest(Hashtable<String, String> data) {
+
+        if (!data.get("runmode").equals("Y")) {
+            throw new SkipException("Skipping as run mode is 'N'");
+        }
         
         // Log test start information
         ExtentStepLogger.logTestStart("Add Customer Test", "Test to add a new customer with provided details");
         
         // Log test data
-        ExtentStepLogger.logTestData("First Name", firstName);
-        ExtentStepLogger.logTestData("Last Name", lastName);
-        ExtentStepLogger.logTestData("Post Code", postCode);
-        ExtentStepLogger.logTestData("Expected Alert Text", allertText);
+        ExtentStepLogger.logTestData("First Name", data.get("firstname"));
+        ExtentStepLogger.logTestData("Last Name", data.get("lastname"));
+        ExtentStepLogger.logTestData("Post Code", data.get("postcode"));
+        ExtentStepLogger.logTestData("Expected Alert Text", data.get("allerttext"));
         
         try {
             ExtentStepLogger.logSection("Customer Addition Process");
@@ -43,17 +49,17 @@ public class AddCustomerTest extends TestBase {
             // Fill customer form
             ExtentStepLogger.logSection("Customer Form Filling");
             
-            ExtentStepLogger.logStep("Enter first name: " + firstName);
-            driver.findElement(By.cssSelector(OR.getProperty("firstname_CSS"))).sendKeys(firstName);
-            ExtentStepLogger.logPass("Successfully entered first name: " + firstName);
+            ExtentStepLogger.logStep("Enter first name: " + data.get("firstname"));
+            driver.findElement(By.cssSelector(OR.getProperty("firstname_CSS"))).sendKeys(data.get("firstname"));
+            ExtentStepLogger.logPass("Successfully entered first name: " + data.get("firstname"));
 
-            ExtentStepLogger.logStep("Enter last name: " + lastName);
-            driver.findElement(By.cssSelector(OR.getProperty("lastname_CSS"))).sendKeys(lastName);
-            ExtentStepLogger.logPass("Successfully entered last name: " + lastName);
+            ExtentStepLogger.logStep("Enter last name: " + data.get("lastname"));
+            driver.findElement(By.cssSelector(OR.getProperty("lastname_CSS"))).sendKeys(data.get("lastname"));
+            ExtentStepLogger.logPass("Successfully entered last name: " + data.get("lastname"));
 
-            ExtentStepLogger.logStep("Enter post code: " + postCode);
-            driver.findElement(By.cssSelector(OR.getProperty("postcode_CSS"))).sendKeys(postCode);
-            ExtentStepLogger.logPassWithScreenshot("Successfully entered post code: " + postCode, driver, "Form_Filled");
+            ExtentStepLogger.logStep("Enter post code: " + data.get("postcode"));
+            driver.findElement(By.cssSelector(OR.getProperty("postcode_CSS"))).sendKeys(data.get("postcode"));
+            ExtentStepLogger.logPassWithScreenshot("Successfully entered post code: " + data.get("postcode"), driver, "Form_Filled");
 
             // Submit form
             ExtentStepLogger.logSection("Form Submission");
@@ -70,21 +76,20 @@ public class AddCustomerTest extends TestBase {
             
             // Verification
             ExtentStepLogger.logStep("Verify alert text contains expected text");
-            boolean alertVerification = alertText.contains(allertText);
-            ExtentStepLogger.logVerification("Alert Text Verification", allertText, alertText, alertVerification);
+            boolean alertVerification = alertText.contains(data.get("alerttext"));
+            ExtentStepLogger.logVerification("Alert Text Verification", data.get("alerttext"), alertText, alertVerification);
             
             Assert.assertTrue(alertVerification, 
-                "Alert text '" + alertText + "' does not contain expected text '" + allertText + "'");
+                "Alert text '" + alertText + "' does not contain expected text '" + data.get("alerttext") + "'");
             
             ExtentStepLogger.logStep("Accept the alert");
             alert.accept();
             ExtentStepLogger.logPassWithScreenshot("Successfully accepted alert and completed customer addition", driver, "Customer_Added_Success");
             
-            ExtentStepLogger.logPass("Customer added successfully: " + firstName + " " + lastName);
-            
+
         } catch (Exception e) {
-            ExtentStepLogger.logFailWithScreenshot("Test failed for customer: " + firstName + " " + lastName + " - " + e.getMessage(), driver, "Customer_Add_Failed");
-            TestBase.logError("Test failed for customer: " + firstName + " " + lastName + " - " + e.getMessage());
+            ExtentStepLogger.logFailWithScreenshot("Test failed for customer: " + data.get("firstname") + " " + data.get("lastname") + " - " + e.getMessage(), driver, "Customer_Add_Failed");
+            TestBase.logError("Test failed for customer: " + data.get("firstname") + " " + data.get("lastname") + " - " + e.getMessage());
             throw e;
         }
     }
@@ -116,6 +121,4 @@ public class AddCustomerTest extends TestBase {
             }
         }
     }
-    
-
 }

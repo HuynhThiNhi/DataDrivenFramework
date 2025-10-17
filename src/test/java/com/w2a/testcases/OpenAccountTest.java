@@ -12,7 +12,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 
 public class OpenAccountTest extends TestBase {
@@ -26,12 +26,12 @@ public class OpenAccountTest extends TestBase {
 
 
     @Test(description = "Test Open Account with Valid Data", dataProviderClass = TestUtil.class, dataProvider = "dp")
-    public void openAccountTest(String customer, String currency) {
+    public void openAccountTest(Hashtable<String, String> data) {
         ExtentStepLogger.logTestStart("Open Account Test", "Test opening account with valid customer and currency");
         
         // Log test data
-        ExtentStepLogger.logTestData("Customer", customer);
-        ExtentStepLogger.logTestData("Currency", currency);
+        ExtentStepLogger.logTestData("Customer", data.get("customer"));
+        ExtentStepLogger.logTestData("Currency", data.get("currency"));
         
         try {
             ExtentStepLogger.logSection("Navigate to Open Account Page");
@@ -42,13 +42,13 @@ public class OpenAccountTest extends TestBase {
             
             ExtentStepLogger.logSection("Select Customer");
             By customerDropdownLocator = By.cssSelector(OR.getProperty("customer_CSS"));
-            boolean customerSelected = DropdownUtils.selectDropdownOption(driver, customerDropdownLocator, "Customer", customer);
-            Assert.assertTrue(customerSelected, "Failed to select customer: " + customer);
+            boolean customerSelected = DropdownUtils.selectDropdownOption(driver, customerDropdownLocator, "Customer", data.get("customer"));
+            Assert.assertTrue(customerSelected, "Failed to select customer: " + data.get("customer"));
             
             ExtentStepLogger.logSection("Select Currency");
             By currencyDropdownLocator = By.cssSelector(OR.getProperty("currency_CSS"));
-            boolean currencySelected = DropdownUtils.selectDropdownOption(driver, currencyDropdownLocator, "Currency", currency);
-            Assert.assertTrue(currencySelected, "Failed to select currency: " + currency);
+            boolean currencySelected = DropdownUtils.selectDropdownOption(driver, currencyDropdownLocator, "Currency", data.get("currency"));
+            Assert.assertTrue(currencySelected, "Failed to select currency: " + data.get("currency"));
             
             ExtentStepLogger.logSection("Submit Account Opening Form");
             ExtentStepLogger.logStep("Click on Process button to open account");
@@ -66,16 +66,16 @@ public class OpenAccountTest extends TestBase {
             Assert.assertTrue(alertVerification,
                     "Alert text '" + alertText + "' does not contain expected text '" );
             
-            ExtentStepLogger.logPass("Account opened successfully for customer: " + customer + " with currency: " + currency);
+            ExtentStepLogger.logPass("Account opened successfully for customer: " + data.get("customer") + " with currency: " + data.get("currency"));
             
         } catch (Exception e) {
-            ExtentStepLogger.logFailWithScreenshot("Open account test failed for customer: " + customer + ", currency: " + currency + " - " + e.getMessage(), driver, "OpenAccount_Failed");
+            ExtentStepLogger.logFailWithScreenshot("Open account test failed for customer: " + data.get("customer") + ", currency: " + data.get("currency") + " - " + e.getMessage(), driver, "OpenAccount_Failed");
             TestBase.logError("Open account test failed: " + e.getMessage());
             throw e;
         }
     }
 
-    @Test(priority = 4, description = "Test All Customer and Currency Combinations")
+    @Test(description = "Test All Customer and Currency Combinations")
     public void testAllCustomerCurrencyCombinations() {
         ExtentStepLogger.logTestStart("All Combinations Test", "Test all possible customer and currency combinations");
         

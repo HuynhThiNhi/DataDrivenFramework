@@ -1,282 +1,217 @@
 package com.w2a.utilities;
 
 import com.w2a.base.TestBase;
-import com.w2a.utilities.ExtentStepLogger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Utility class for handling dropdown operations and verifications
- * Provides methods to verify dropdown options and select values
+ * Utility for dropdown operations and verifications.
+ * Includes By-based helpers and WebElement-based overloads.
  */
 public class DropdownUtils {
-    
+
     private static final int DEFAULT_TIMEOUT_SECONDS = 10;
-    
-    /**
-     * Gets all options from a dropdown
-     * @param driver WebDriver instance
-     * @param dropdownLocator Locator for the dropdown element
-     * @param dropdownName Name of dropdown for logging
-     * @return List of option texts
-     */
+
+    // -------------------------
+    // By-based convenience APIs
+    // -------------------------
+
     public static List<String> getAllDropdownOptions(WebDriver driver, By dropdownLocator, String dropdownName) {
-        List<String> options = new ArrayList<>();
         try {
-            ExtentStepLogger.logStep("Get all options from " + dropdownName + " dropdown");
-            
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
-            WebElement dropdownElement = wait.until(ExpectedConditions.elementToBeClickable(dropdownLocator));
-            
-            Select select = new Select(dropdownElement);
-            List<WebElement> optionElements = select.getOptions();
-            
-            for (WebElement option : optionElements) {
-                String optionText = option.getText().trim();
-                if (!optionText.isEmpty()) {
-                    options.add(optionText);
-                }
-            }
-            
-            ExtentStepLogger.logPass("Successfully retrieved " + options.size() + " options from " + dropdownName);
-            TestBase.logInfo("Dropdown " + dropdownName + " options: " + options);
-            
+            WebElement dropdownElement = waitForClickable(driver, dropdownLocator);
+            return getAllDropdownOptions(dropdownElement, dropdownName);
         } catch (Exception e) {
             ExtentStepLogger.logFail("Failed to get options from " + dropdownName + ": " + e.getMessage());
             TestBase.logError("Error getting dropdown options: " + e.getMessage());
+            return new ArrayList<>();
         }
-        
-        return options;
     }
-    
-    /**
-     * Verifies all expected options are present in dropdown
-     * @param driver WebDriver instance
-     * @param dropdownLocator Locator for the dropdown element
-     * @param dropdownName Name of dropdown for logging
-     * @param expectedOptions List of expected option texts
-     * @return true if all expected options are found, false otherwise
-     */
+
     public static boolean verifyDropdownOptions(WebDriver driver, By dropdownLocator, String dropdownName, List<String> expectedOptions) {
         try {
-            ExtentStepLogger.logStep("Verify all expected options are present in " + dropdownName + " dropdown");
-            
-            List<String> actualOptions = getAllDropdownOptions(driver, dropdownLocator, dropdownName);
-            boolean allOptionsFound = true;
-            List<String> missingOptions = new ArrayList<>();
-            List<String> extraOptions = new ArrayList<>();
-            
-            // Check for missing expected options
-            for (String expectedOption : expectedOptions) {
-                if (!actualOptions.contains(expectedOption)) {
-                    missingOptions.add(expectedOption);
-                    allOptionsFound = false;
-                }
-            }
-            
-            // Check for unexpected options
-            for (String actualOption : actualOptions) {
-                if (!expectedOptions.contains(actualOption)) {
-                    extraOptions.add(actualOption);
-                }
-            }
-            
-            if (allOptionsFound && extraOptions.isEmpty()) {
-                ExtentStepLogger.logPass("All expected options verified in " + dropdownName + " dropdown");
-                ExtentStepLogger.logVerification("Dropdown Options Verification", 
-                    "All expected options present", "All expected options present", true);
-            } else {
-                String verificationMessage = "Missing: " + missingOptions + ", Extra: " + extraOptions;
-                ExtentStepLogger.logFail("Dropdown verification failed for " + dropdownName + ": " + verificationMessage);
-                ExtentStepLogger.logVerification("Dropdown Options Verification", 
-                    expectedOptions.toString(), actualOptions.toString(), false);
-            }
-            
-            return allOptionsFound && extraOptions.isEmpty();
-            
+            WebElement dropdownElement = waitForClickable(driver, dropdownLocator);
+            return verifyDropdownOptions(dropdownElement, dropdownName, expectedOptions);
         } catch (Exception e) {
             ExtentStepLogger.logFail("Error verifying dropdown options for " + dropdownName + ": " + e.getMessage());
             return false;
         }
     }
-    
-    /**
-     * Selects an option from dropdown by visible text
-     * @param driver WebDriver instance
-     * @param dropdownLocator Locator for the dropdown element
-     * @param dropdownName Name of dropdown for logging
-     * @param optionText Text of option to select
-     * @return true if selection successful, false otherwise
-     */
+
     public static boolean selectDropdownOption(WebDriver driver, By dropdownLocator, String dropdownName, String optionText) {
         try {
-            ExtentStepLogger.logStep("Select '" + optionText + "' from " + dropdownName + " dropdown");
-            
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
-            WebElement dropdownElement = wait.until(ExpectedConditions.elementToBeClickable(dropdownLocator));
-            
-            Select select = new Select(dropdownElement);
-            select.selectByVisibleText(optionText);
-            
-            // Verify selection
-            String selectedOption = select.getFirstSelectedOption().getText();
-            boolean selectionSuccess = selectedOption.equals(optionText);
-            
-            if (selectionSuccess) {
-                ExtentStepLogger.logPass("Successfully selected '" + optionText + "' from " + dropdownName);
-                ExtentStepLogger.logVerification("Dropdown Selection", optionText, selectedOption, true);
-            } else {
-                ExtentStepLogger.logFail("Failed to select '" + optionText + "' from " + dropdownName + ". Selected: " + selectedOption);
-                ExtentStepLogger.logVerification("Dropdown Selection", optionText, selectedOption, false);
-            }
-            
-            return selectionSuccess;
-            
+            WebElement dropdownElement = waitForClickable(driver, dropdownLocator);
+            return selectDropdownOption(dropdownElement, dropdownName, optionText);
         } catch (Exception e) {
             ExtentStepLogger.logFail("Error selecting option from " + dropdownName + ": " + e.getMessage());
             return false;
         }
     }
-    
-    /**
-     * Selects an option from dropdown by index
-     * @param driver WebDriver instance
-     * @param dropdownLocator Locator for the dropdown element
-     * @param dropdownName Name of dropdown for logging
-     * @param index Index of option to select
-     * @return true if selection successful, false otherwise
-     */
+
     public static boolean selectDropdownOptionByIndex(WebDriver driver, By dropdownLocator, String dropdownName, int index) {
         try {
-            ExtentStepLogger.logStep("Select option at index " + index + " from " + dropdownName + " dropdown");
-            
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
-            WebElement dropdownElement = wait.until(ExpectedConditions.elementToBeClickable(dropdownLocator));
-            
-            Select select = new Select(dropdownElement);
-            select.selectByIndex(index);
-            
-            String selectedOption = select.getFirstSelectedOption().getText();
-            ExtentStepLogger.logPass("Successfully selected option at index " + index + ": '" + selectedOption + "'");
-            
-            return true;
-            
+            WebElement dropdownElement = waitForClickable(driver, dropdownLocator);
+            return selectDropdownOptionByIndex(dropdownElement, dropdownName, index);
         } catch (Exception e) {
             ExtentStepLogger.logFail("Error selecting option by index from " + dropdownName + ": " + e.getMessage());
             return false;
         }
     }
-    
-    /**
-     * Gets the currently selected option from dropdown
-     * @param driver WebDriver instance
-     * @param dropdownLocator Locator for the dropdown element
-     * @param dropdownName Name of dropdown for logging
-     * @return Currently selected option text
-     */
+
     public static String getSelectedDropdownOption(WebDriver driver, By dropdownLocator, String dropdownName) {
         try {
-            ExtentStepLogger.logStep("Get currently selected option from " + dropdownName + " dropdown");
-            
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
-            WebElement dropdownElement = wait.until(ExpectedConditions.elementToBeClickable(dropdownLocator));
-            
-            Select select = new Select(dropdownElement);
-            String selectedOption = select.getFirstSelectedOption().getText();
-            
-            ExtentStepLogger.logPass("Currently selected option in " + dropdownName + ": '" + selectedOption + "'");
-            return selectedOption;
-            
+            WebElement dropdownElement = waitForClickable(driver, dropdownLocator);
+            return getSelectedDropdownOption(dropdownElement, dropdownName);
         } catch (Exception e) {
             ExtentStepLogger.logFail("Error getting selected option from " + dropdownName + ": " + e.getMessage());
             return null;
         }
     }
-    
-    /**
-     * Verifies dropdown is enabled and clickable
-     * @param driver WebDriver instance
-     * @param dropdownLocator Locator for the dropdown element
-     * @param dropdownName Name of dropdown for logging
-     * @return true if dropdown is enabled, false otherwise
-     */
+
     public static boolean verifyDropdownEnabled(WebDriver driver, By dropdownLocator, String dropdownName) {
         try {
-            ExtentStepLogger.logStep("Verify " + dropdownName + " dropdown is enabled");
-            
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
-            WebElement dropdownElement = wait.until(ExpectedConditions.elementToBeClickable(dropdownLocator));
-            
-            boolean isEnabled = dropdownElement.isEnabled();
-            boolean isDisplayed = dropdownElement.isDisplayed();
-            
-            if (isEnabled && isDisplayed) {
-                ExtentStepLogger.logPass(dropdownName + " dropdown is enabled and displayed");
-                ExtentStepLogger.logVerification("Dropdown Enabled", "Enabled", "Enabled", true);
-            } else {
-                ExtentStepLogger.logFail(dropdownName + " dropdown is not enabled or displayed. Enabled: " + isEnabled + ", Displayed: " + isDisplayed);
-                ExtentStepLogger.logVerification("Dropdown Enabled", "Enabled", "Enabled: " + isEnabled + ", Displayed: " + isDisplayed, false);
-            }
-            
-            return isEnabled && isDisplayed;
-            
+            WebElement dropdownElement = waitForClickable(driver, dropdownLocator);
+            return verifyDropdownEnabled(dropdownElement, dropdownName);
         } catch (Exception e) {
             ExtentStepLogger.logFail("Error verifying dropdown enabled state for " + dropdownName + ": " + e.getMessage());
             return false;
         }
     }
-    
-    /**
-     * Comprehensive dropdown verification - checks all aspects
-     * @param driver WebDriver instance
-     * @param dropdownLocator Locator for the dropdown element
-     * @param dropdownName Name of dropdown for logging
-     * @param expectedOptions List of expected options
-     * @return true if all verifications pass, false otherwise
-     */
+
     public static boolean comprehensiveDropdownVerification(WebDriver driver, By dropdownLocator, String dropdownName, List<String> expectedOptions) {
         ExtentStepLogger.logSection("Comprehensive Dropdown Verification: " + dropdownName);
-        
         boolean allPassed = true;
-        
-        // 1. Verify dropdown is enabled
-        boolean enabledCheck = verifyDropdownEnabled(driver, dropdownLocator, dropdownName);
-        allPassed = allPassed && enabledCheck;
-        
-        // 2. Get all options
+
+        boolean enabled = verifyDropdownEnabled(driver, dropdownLocator, dropdownName);
+        allPassed = allPassed && enabled;
+
         List<String> actualOptions = getAllDropdownOptions(driver, dropdownLocator, dropdownName);
         boolean hasOptions = !actualOptions.isEmpty();
         allPassed = allPassed && hasOptions;
-        
         if (!hasOptions) {
             ExtentStepLogger.logFail(dropdownName + " dropdown has no options");
             return false;
         }
-        
-        // 3. Verify expected options
+
         if (expectedOptions != null && !expectedOptions.isEmpty()) {
-            boolean optionsCheck = verifyDropdownOptions(driver, dropdownLocator, dropdownName, expectedOptions);
-            allPassed = allPassed && optionsCheck;
+            boolean optionsOk = verifyDropdownOptions(driver, dropdownLocator, dropdownName, expectedOptions);
+            allPassed = allPassed && optionsOk;
         }
-        
-        // 4. Test selection functionality
-        if (!actualOptions.isEmpty()) {
-            String firstOption = actualOptions.get(0);
-            boolean selectionCheck = selectDropdownOption(driver, dropdownLocator, dropdownName, firstOption);
-            allPassed = allPassed && selectionCheck;
-        }
-        
-        ExtentStepLogger.logVerification("Comprehensive Dropdown Verification", "All checks passed", 
-            allPassed ? "All checks passed" : "Some checks failed", allPassed);
-        
+
+        boolean selectionOk = selectDropdownOption(driver, dropdownLocator, dropdownName, actualOptions.get(0));
+        allPassed = allPassed && selectionOk;
+
+        ExtentStepLogger.logVerification("Comprehensive Dropdown Verification", "All checks passed",
+                allPassed ? "All checks passed" : "Some checks failed", allPassed);
         return allPassed;
     }
+
+    // ----------------------------------
+    // WebElement-based preferred overloads
+    // ----------------------------------
+
+    public static List<String> getAllDropdownOptions(WebElement dropdownElement, String dropdownName) {
+        List<String> options = new ArrayList<>();
+        Select select = new Select(dropdownElement);
+        List<WebElement> optionElements = select.getOptions();
+        for (WebElement option : optionElements) {
+            String text = option.getText().trim();
+            if (!text.isEmpty()) {
+                options.add(text);
+            }
+        }
+        ExtentStepLogger.logPass("Retrieved " + options.size() + " options from " + dropdownName);
+        TestBase.logInfo("Dropdown " + dropdownName + " options: " + options);
+        return options;
+    }
+
+    public static boolean verifyDropdownOptions(WebElement dropdownElement, String dropdownName, List<String> expectedOptions) {
+        List<String> actualOptions = getAllDropdownOptions(dropdownElement, dropdownName);
+        boolean allFound = true;
+        List<String> missing = new ArrayList<>();
+        List<String> extra = new ArrayList<>();
+
+        for (String exp : expectedOptions) {
+            if (!actualOptions.contains(exp)) {
+                missing.add(exp);
+                allFound = false;
+            }
+        }
+        for (String act : actualOptions) {
+            if (!expectedOptions.contains(act)) {
+                extra.add(act);
+            }
+        }
+
+        if (allFound && extra.isEmpty()) {
+            ExtentStepLogger.logPass("All expected options verified in " + dropdownName);
+            ExtentStepLogger.logVerification("Dropdown Options Verification", "All expected options present", "All expected options present", true);
+        } else {
+            String msg = "Missing: " + missing + ", Extra: " + extra;
+            ExtentStepLogger.logFail("Dropdown verification failed for " + dropdownName + ": " + msg);
+            ExtentStepLogger.logVerification("Dropdown Options Verification", expectedOptions.toString(), actualOptions.toString(), false);
+        }
+        return allFound && extra.isEmpty();
+    }
+
+    public static boolean selectDropdownOption(WebElement dropdownElement, String dropdownName, String optionText) {
+        Select select = new Select(dropdownElement);
+        select.selectByVisibleText(optionText);
+        String selected = select.getFirstSelectedOption().getText();
+        boolean ok = selected.equals(optionText);
+        ExtentStepLogger.logVerification("Dropdown Selection", optionText, selected, ok);
+        if (ok) {
+            ExtentStepLogger.logPass("Selected '" + optionText + "' from " + dropdownName);
+        } else {
+            ExtentStepLogger.logFail("Failed to select '" + optionText + "' from " + dropdownName + " (selected: " + selected + ")");
+        }
+        return ok;
+    }
+
+    public static boolean selectDropdownOptionByIndex(WebElement dropdownElement, String dropdownName, int index) {
+        Select select = new Select(dropdownElement);
+        select.selectByIndex(index);
+        String selected = select.getFirstSelectedOption().getText();
+        ExtentStepLogger.logPass("Selected index " + index + " ('" + selected + "') from " + dropdownName);
+        return true;
+    }
+
+    public static String getSelectedDropdownOption(WebElement dropdownElement, String dropdownName) {
+        Select select = new Select(dropdownElement);
+        String selected = select.getFirstSelectedOption().getText();
+        ExtentStepLogger.logPass("Currently selected in " + dropdownName + ": '" + selected + "'");
+        return selected;
+    }
+
+    public static boolean verifyDropdownEnabled(WebElement dropdownElement, String dropdownName) {
+        boolean enabled = dropdownElement.isEnabled();
+        boolean displayed = dropdownElement.isDisplayed();
+        boolean ok = enabled && displayed;
+        if (ok) {
+            ExtentStepLogger.logPass(dropdownName + " dropdown is enabled and displayed");
+            ExtentStepLogger.logVerification("Dropdown Enabled", "Enabled", "Enabled", true);
+        } else {
+            ExtentStepLogger.logFail(dropdownName + " dropdown is not enabled or displayed. Enabled: " + enabled + ", Displayed: " + displayed);
+            ExtentStepLogger.logVerification("Dropdown Enabled", "Enabled", "Enabled: " + enabled + ", Displayed: " + displayed, false);
+        }
+        return ok;
+    }
+
+    // -----------------
+    // Internal helpers
+    // -----------------
+
+    private static WebElement waitForClickable(WebDriver driver, By locator) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
+        return wait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
 }
+
+
