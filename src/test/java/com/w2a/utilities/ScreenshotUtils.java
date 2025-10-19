@@ -39,7 +39,8 @@ public class ScreenshotUtils {
             
             // Generate timestamp for unique file names
             String timestamp = new SimpleDateFormat(DATE_FORMAT).format(new Date());
-            String fileName = testName + "_" + timestamp + ".png";
+//            String fileName = testName + "_" + timestamp + ".png";
+            String fileName = testName + ".png";
             String filePath = SCREENSHOT_DIR + fileName;
             String relativePath = RELATIVE_SCREENSHOT_DIR + fileName;
             
