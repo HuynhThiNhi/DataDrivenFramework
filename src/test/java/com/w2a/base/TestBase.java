@@ -14,6 +14,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Reporter;
 import org.testng.annotations.AfterSuite;
@@ -37,6 +38,7 @@ public class TestBase {
 	public static Logger logger = LogManager.getLogger(TestBase.class);
 	public static ExcelReader excel = new ExcelReader(System.getProperty("user.dir") + "/src/test/resources/excel/testdata.xlsx");
 	public static WebDriverWait wait;
+	public static String browser;
 
 	@BeforeSuite
 	public void setUp() {
@@ -49,9 +51,19 @@ public class TestBase {
 				fis = new FileInputStream(System.getProperty("user.dir").concat("/src/test/resources/properties/OR.properties"));
 				OR.load(fis);
 
-				if (config.getProperty("browser").equalsIgnoreCase("chrome")) {
+				if (System.getenv("browser") != null && !System.getenv("browser").isEmpty()) {
+					browser = System.getenv("browser");
+					System.setProperty("browser", browser);
+
+				} else {
+					browser = config.getProperty("browser");
+				}
+				if (browser.equalsIgnoreCase("chrome")) {
 					WebDriverManager.chromedriver().setup();
 					driver = new ChromeDriver();
+				} else if (browser.equalsIgnoreCase("safari")) {
+					WebDriverManager.safaridriver().setup();
+					driver = new SafariDriver();
 				}
 
 				driver.manage().window().fullscreen();
