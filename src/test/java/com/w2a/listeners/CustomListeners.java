@@ -21,7 +21,7 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
     @Override
     public void onStart(ISuite suite) {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String reportPath = System.getProperty("user.dir") + "/target/extent-reports/ExtentReport_" + timestamp + ".html";
+        String reportPath = System.getProperty("user.dir") + "/target/extent-reports/ExtentReport.html";
         extent = ExtentReportManager.createInstance(reportPath);
     }
 
