@@ -19,6 +19,16 @@ public class ExtentReportManager {
         htmlReporter.config().setDocumentTitle(fileName);
         htmlReporter.config().setEncoding("utf-8");
         htmlReporter.config().setReportName(fileName);
+        // Make embedded screenshots responsive in Jenkins/HTML publishers
+        htmlReporter.config().setCss(
+            ".media img, img.r-img, .screenshot img, .modal-media img {\n" +
+            "  max-width: 100% !important;\n" +
+            "  height: auto !important;\n" +
+            "}\n" +
+            ".media {\n" +
+            "  overflow: hidden;\n" +
+            "}\n"
+        );
         
         extent = new ExtentReports();
         extent.attachReporter(htmlReporter);
