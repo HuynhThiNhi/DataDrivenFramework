@@ -46,8 +46,7 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
         failedTests = 0;
         skippedTests = 0;
         
-        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String reportPath = System.getProperty("user.dir") + "/target/extent-reports/ExtentReport_" + timestamp + ".html";
+        String reportPath = System.getProperty("user.dir") + "/target/extent-reports/ExtentReport.html";
         extent = ExtentReportManager.createInstance(reportPath);
         
         TestBase.logInfo("Test Suite Started: " + suiteName);
