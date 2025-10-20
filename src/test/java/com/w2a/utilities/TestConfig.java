@@ -4,14 +4,19 @@ public class TestConfig{
 
 	
 	public static String server="smtp.gmail.com";
-	public static String from = "vaffaproject@gmail.com";
-	public static String password = "Selenium@123";
-	public static String[] to ={"seleniumcoaching@gmail.com","trainer@way2automation.com"};
+	public static String from = "huynhthinhi206@gmail.com";
+	public static String password = "dpqo xwzc lpjr tupy";
+	public static String[] to ={"seleniumcoaching@gmail.com","huynhthinhi206@gmail.com"};
 	public static String subject = "Extent Project Report";
 	
 	public static String messageBody ="TestMessage";
 	public static String attachmentPath="c:\\screenshot\\2017_10_3_14_49_9.jpg";
 	public static String attachmentName="error.jpg";
+	
+	// Jenkins Report Configuration
+	public static String jenkinsHost = "localhost"; // Change to your Jenkins server IP/hostname
+	public static String jenkinsPort = "8080";
+	public static String jenkinsJobPath = "/job/DataDriven/HTML_20Report/";
 	
 	
 	
