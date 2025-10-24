@@ -6,7 +6,10 @@ import com.w2a.utilities.ExtentStepLogger;
 import com.w2a.utilities.TestUtil;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeClass;
@@ -16,14 +19,21 @@ import java.util.Hashtable;
 
 public class AddCustomerTest extends TestBase {
 
-    @BeforeClass
-    public void loginAsManager() {
-        driver.get(config.getProperty("testsiteurl"));
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("bmlBtn_CSS")))).click();
-    }
+//    @BeforeClass
+//    public void loginAsManager() {
+//        getDriver().get(config.getProperty("testsiteurl"));
+//        getWait().until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("bmlBtn_CSS")))).click();
+//    }
 
     @Test(dataProviderClass = TestUtil.class, dataProvider = "dp")
-    public void addCustomerTest(Hashtable<String, String> data) {
+    public void addCustomerTest(Hashtable<String, String> data) throws InterruptedException {
+        long threadId = Thread.currentThread().getId();
+        logger.info("Test STARTING on thread: " + threadId);
+        WebDriver driver = getDriver();
+        WebDriverWait wait = getWait();
+
+        driver.get(config.getProperty("testsiteurl"));
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("bmlBtn_CSS")))).click();
 
         if (!data.get("runmode").equals("Y")) {
             throw new SkipException("Skipping as run mode is 'N'");
@@ -92,6 +102,8 @@ public class AddCustomerTest extends TestBase {
             TestBase.logError("Test failed for customer: " + data.get("firstname") + " " + data.get("lastname") + " - " + e.getMessage());
             throw e;
         }
+
+
     }
 
 //    @DataProvider

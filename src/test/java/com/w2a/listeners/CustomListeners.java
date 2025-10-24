@@ -12,6 +12,7 @@ import com.w2a.utilities.MonitoringMail;
 import com.w2a.utilities.MailRequest;
 import com.w2a.utilities.MailConfig;
 import com.w2a.utilities.TestConfig;
+import org.openqa.selenium.WebDriver;
 import org.testng.*;
 
 import javax.mail.MessagingException;
@@ -21,30 +22,35 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CustomListeners extends TestBase implements ITestListener, ISuiteListener {
 
     private static ExtentReports extent;
     private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
     
-    // Test execution tracking
-    private static int totalTests = 0;
-    private static int passedTests = 0;
-    private static int failedTests = 0;
-    private static int skippedTests = 0;
-    private static long suiteStartTime;
-    private static String suiteName;
+    // Thread-safe test execution tracking
+    private static final AtomicInteger totalTests = new AtomicInteger(0);
+    private static final AtomicInteger passedTests = new AtomicInteger(0);
+    private static final AtomicInteger failedTests = new AtomicInteger(0);
+    private static final AtomicInteger skippedTests = new AtomicInteger(0);
+    private static final AtomicLong suiteStartTime = new AtomicLong(0);
+    private static volatile String suiteName;
+    
+    // Thread-safe driver access is handled by TestBase
 
     @Override
     public void onStart(ISuite suite) {
         suiteName = suite.getName();
-        suiteStartTime = System.currentTimeMillis();
+        suiteStartTime.set(System.currentTimeMillis());
         
-        // Reset counters
-        totalTests = 0;
-        passedTests = 0;
-        failedTests = 0;
-        skippedTests = 0;
+        // Reset counters atomically
+        totalTests.set(0);
+        passedTests.set(0);
+        failedTests.set(0);
+        skippedTests.set(0);
         
         String reportPath = System.getProperty("user.dir") + "/target/extent-reports/ExtentReport.html";
         extent = ExtentReportManager.createInstance(reportPath);
@@ -60,13 +66,13 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
         }
         
         // Calculate execution time
-        long executionTime = System.currentTimeMillis() - suiteStartTime;
+        long executionTime = System.currentTimeMillis() - suiteStartTime.get();
         long executionTimeSeconds = executionTime / 1000;
         long executionTimeMinutes = executionTimeSeconds / 60;
         
         TestBase.logInfo("Test Suite Completed: " + suiteName);
-        TestBase.logInfo("Total Tests: " + totalTests + ", Passed: " + passedTests + 
-                        ", Failed: " + failedTests + ", Skipped: " + skippedTests);
+        TestBase.logInfo("Total Tests: " + totalTests.get() + ", Passed: " + passedTests.get() + 
+                        ", Failed: " + failedTests.get() + ", Skipped: " + skippedTests.get());
         TestBase.logInfo("Execution Time: " + executionTimeMinutes + " minutes " + 
                         (executionTimeSeconds % 60) + " seconds");
         
@@ -74,23 +80,24 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
         sendTestExecutionReport(executionTime);
     }
 
+//    triggerd before each test method begins execution. It happens after @BeforeClass and @BeforeMethod
     @Override
     public void onTestStart(ITestResult result) {
-        totalTests++;
-        
+        totalTests.incrementAndGet();
+        // Get the test from ThreadLocal and log success
         ExtentTest extentTest = extent.createTest(result.getMethod().getMethodName())
                 .assignCategory(result.getTestClass().getRealClass().getSimpleName());
         test.set(extentTest);
         
         // Set the test in ExtentTestManager for step logging
         ExtentStepLogger.setTest(extentTest);
-        
+
         test.get().log(Status.INFO, "Test Started: " + result.getMethod().getMethodName());
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        passedTests++;
+        passedTests.incrementAndGet();
         ExtentStepLogger.logTestEnd(result.getMethod().getMethodName(), "PASSED");
         test.get().log(Status.PASS, "Test Passed");
         attachScreenshot(result, "_PASSED");
@@ -98,7 +105,7 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
 
     @Override
     public void onTestFailure(ITestResult result) {
-        failedTests++;
+        failedTests.incrementAndGet();
         ExtentStepLogger.logTestEnd(result.getMethod().getMethodName(), "FAILED");
         test.get().log(Status.FAIL, result.getThrowable());
         attachScreenshot(result, "_FAILED");
@@ -106,7 +113,7 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        skippedTests++;
+        skippedTests.incrementAndGet();
         ExtentStepLogger.logTestEnd(result.getMethod().getMethodName(), "SKIPPED");
         test.get().log(Status.SKIP, "Test Skipped");
     }
@@ -117,8 +124,10 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
 
     private void attachScreenshot(ITestResult result, String suffix) {
         try {
+            // Get driver from TestBase or ThreadLocal
+            WebDriver driver = getDriverForTest(result);
             if (driver != null) {
-                String name = result.getMethod().getMethodName() + suffix;
+                String name = result.getMethod().getMethodName() + "_" + Thread.currentThread().getId() + suffix;
                 String path = ScreenshotUtils.captureScreenshot(driver, name);
                 if (path != null) {
                     test.get().info("Screenshot:", MediaEntityBuilder.createScreenCaptureFromPath(path).build());
@@ -126,6 +135,20 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
             }
         } catch (Exception e) {
             TestBase.logger.warn("Unable to attach screenshot: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Get WebDriver instance for the current test
+     * Uses TestBase ThreadLocal methods for consistency
+     */
+    private WebDriver getDriverForTest(ITestResult result) {
+        try {
+            // Use TestBase ThreadLocal methods
+            return TestBase.getDriver();
+        } catch (Exception e) {
+            TestBase.logger.warn("Could not get driver for test: " + e.getMessage());
+            return null;
         }
     }
     
@@ -153,7 +176,7 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
             request.setTo(Arrays.asList(TestConfig.to));
             request.setSubject("Test Execution Report - " + suiteName + " - " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             request.setHtmlContent(generateEmailContent(executionTime));
-            request.setPriority(failedTests > 0 ? 1 : 3); // High priority if tests failed
+            request.setPriority(failedTests.get() > 0 ? 1 : 3); // High priority if tests failed
             
             // Add Extent report as attachment
             String reportPath = System.getProperty("user.dir") + "/target/extent-reports/";
@@ -190,9 +213,14 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
         long executionTimeMinutes = executionTimeSeconds / 60;
         long remainingSeconds = executionTimeSeconds % 60;
         
-        String statusColor = failedTests > 0 ? "#ff4444" : "#44aa44"; // Red if failed, green if passed
-        String statusText = failedTests > 0 ? "FAILED" : "PASSED";
-        String statusIcon = failedTests > 0 ? "❌" : "✅";
+        int failedCount = failedTests.get();
+        int passedCount = passedTests.get();
+        int skippedCount = skippedTests.get();
+        int totalCount = totalTests.get();
+        
+        String statusColor = failedCount > 0 ? "#ff4444" : "#44aa44"; // Red if failed, green if passed
+        String statusText = failedCount > 0 ? "FAILED" : "PASSED";
+        String statusIcon = failedCount > 0 ? "❌" : "✅";
         
         StringBuilder html = new StringBuilder();
         html.append("<!DOCTYPE html>");
@@ -224,19 +252,23 @@ public class CustomListeners extends TestBase implements ITestListener, ISuiteLi
         
         // Statistics
         html.append("<div class='stats'>");
-        html.append("<div class='stat-box total'><h3>").append(totalTests).append("</h3><p>Total Tests</p></div>");
-        html.append("<div class='stat-box passed'><h3>").append(passedTests).append("</h3><p>Passed</p></div>");
-        html.append("<div class='stat-box failed'><h3>").append(failedTests).append("</h3><p>Failed</p></div>");
-        html.append("<div class='stat-box skipped'><h3>").append(skippedTests).append("</h3><p>Skipped</p></div>");
+        html.append("<div class='stat-box total'><h3>").append(totalCount).append("</h3><p>Total Tests</p></div>");
+        html.append("<div class='stat-box passed'><h3>").append(passedCount).append("</h3><p>Passed</p></div>");
+        html.append("<div class='stat-box failed'><h3>").append(failedCount).append("</h3><p>Failed</p></div>");
+        html.append("<div class='stat-box skipped'><h3>").append(skippedCount).append("</h3><p>Skipped</p></div>");
         html.append("</div>");
         
         // Additional information
         html.append("<div class='summary'>");
         html.append("<h3>Test Summary</h3>");
         html.append("<ul>");
-        html.append("<li><strong>Pass Rate:</strong> ").append(String.format("%.1f", (double)passedTests/totalTests*100)).append("%</li>");
-        html.append("<li><strong>Failure Rate:</strong> ").append(String.format("%.1f", (double)failedTests/totalTests*100)).append("%</li>");
-        html.append("<li><strong>Skip Rate:</strong> ").append(String.format("%.1f", (double)skippedTests/totalTests*100)).append("%</li>");
+        if (totalCount > 0) {
+            html.append("<li><strong>Pass Rate:</strong> ").append(String.format("%.1f", (double)passedCount/totalCount*100)).append("%</li>");
+            html.append("<li><strong>Failure Rate:</strong> ").append(String.format("%.1f", (double)failedCount/totalCount*100)).append("%</li>");
+            html.append("<li><strong>Skip Rate:</strong> ").append(String.format("%.1f", (double)skippedCount/totalCount*100)).append("%</li>");
+        } else {
+            html.append("<li><strong>No tests executed</strong></li>");
+        }
         html.append("</ul>");
         html.append("<p><em>Detailed test report is attached to this email.</em></p>");
         

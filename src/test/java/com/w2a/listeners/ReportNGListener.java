@@ -25,8 +25,8 @@ public class ReportNGListener implements ITestListener {
         Reporter.log("<br><b>Test Status:</b> <span style='color: green;'>PASSED</span><br>");
         
         // Capture success screenshot
-        if (TestBase.driver != null) {
-            ScreenshotUtils.captureSuccessScreenshot(TestBase.driver, result.getMethod().getMethodName());
+        if (TestBase.getDriver() != null) {
+            ScreenshotUtils.captureSuccessScreenshot(TestBase.getDriver(), result.getMethod().getMethodName());
         }
         
         // Add test details
@@ -35,12 +35,12 @@ public class ReportNGListener implements ITestListener {
     
     @Override
     public void onTestFailure(ITestResult result) {
-        TestBase.logger.error("Test failed: " + result.getMethod().getMethodName());
+        TestBase.logger.error("Test failed: {}", result.getMethod().getMethodName());
         Reporter.log("<br><b>Test Status:</b> <span style='color: red;'>FAILED</span><br>");
         
         // Capture failure screenshot
-        if (TestBase.driver != null) {
-            ScreenshotUtils.captureFailureScreenshot(TestBase.driver, result.getMethod().getMethodName());
+        if (TestBase.getDriver() != null) {
+            ScreenshotUtils.captureFailureScreenshot(TestBase.getDriver(), result.getMethod().getMethodName());
         }
         
         // Add failure details
@@ -50,21 +50,21 @@ public class ReportNGListener implements ITestListener {
     
     @Override
     public void onTestSkipped(ITestResult result) {
-        TestBase.logger.warn("Test skipped: " + result.getMethod().getMethodName());
+        TestBase.logger.warn("Test skipped: {}", result.getMethod().getMethodName());
         Reporter.log("<br><b>Test Status:</b> <span style='color: orange;'>SKIPPED</span><br>");
         addTestDetails(result);
     }
     
     @Override
     public void onStart(ITestContext context) {
-        TestBase.logger.info("Test suite started: " + context.getName());
+        TestBase.logger.info("Test suite started: {}", context.getName());
         Reporter.log("<br><h2>Test Suite: " + context.getName() + "</h2><br>");
         Reporter.log("<br><b>Start Time:</b> " + new java.util.Date() + "<br>");
     }
     
     @Override
     public void onFinish(ITestContext context) {
-        TestBase.logger.info("Test suite finished: " + context.getName());
+        TestBase.logger.info("Test suite finished: {}", context.getName());
         Reporter.log("<br><b>End Time:</b> " + new java.util.Date() + "<br>");
         Reporter.log("<br><b>Total Tests:</b> " + context.getAllTestMethods().length + "<br>");
         Reporter.log("<br><b>Passed:</b> " + context.getPassedTests().size() + "<br>");

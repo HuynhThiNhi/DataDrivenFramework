@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Data Driven Framework Test Suite">
+<suite name="Data Driven Framework Test Suite" parallel="methods" thread-count="4" verbose="2">
     
     <!-- ReportNG Listeners -->
 	<!-- always need config listener to have html reports, if not config ReportNG’s HTML reports (and screenshots integration) will not be generated because TestNG never invokes ReportNG’s listeners.-->
@@ -21,6 +21,12 @@
 	<test name="Add Customer Test">
 		<classes>
 			<class name="com.w2a.testcases.AddCustomerTest" />
+		</classes>
+	</test> <!-- Test -->
+
+	<test name="Open Account Test">
+		<classes>
+			<class name="com.w2a.testcases.OpenAccountTest" />
 		</classes>
 	</test> <!-- Test -->
 	

@@ -6,8 +6,10 @@ import com.w2a.utilities.ExtentStepLogger;
 import com.w2a.utilities.DropdownUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -17,21 +19,28 @@ import java.util.List;
 
 public class OpenAccountTest extends TestBase {
 
-    @BeforeClass
-    public void loginAsManager() {
-        driver.get(config.getProperty("testsiteurl")); 
-        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("bmlBtn_CSS")))).click();
-    }
+//    @BeforeClass
+//    public void loginAsManager() {
+//        getDriver().get(config.getProperty("testsiteurl"));
+//        getWait().until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("bmlBtn_CSS")))).click();
+//    }
     
 
 
     @Test(description = "Test Open Account with Valid Data", dataProviderClass = TestUtil.class, dataProvider = "dp")
-    public void openAccountTest(Hashtable<String, String> data) {
+    public void openAccountTest(Hashtable<String, String> data) throws InterruptedException {
+        long threadId = Thread.currentThread().getId();
+        logger.info("Test STARTING on thread: " + threadId);
+        WebDriver driver = getDriver();
+        WebDriverWait wait = getWait();
+        driver.get(config.getProperty("testsiteurl"));
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("bmlBtn_CSS")))).click();
         ExtentStepLogger.logTestStart("Open Account Test", "Test opening account with valid customer and currency");
         
         // Log test data
         ExtentStepLogger.logTestData("Customer", data.get("customer"));
         ExtentStepLogger.logTestData("Currency", data.get("currency"));
+
         
         try {
             ExtentStepLogger.logSection("Navigate to Open Account Page");
@@ -76,7 +85,13 @@ public class OpenAccountTest extends TestBase {
     }
 
     @Test(description = "Test All Customer and Currency Combinations")
-    public void testAllCustomerCurrencyCombinations() {
+    public void testAllCustomerCurrencyCombinations() throws InterruptedException {
+        long threadId = Thread.currentThread().getId();
+        logger.info("Test STARTING on thread: " + threadId);
+        WebDriver driver = getDriver();
+        WebDriverWait wait = getWait();
+        driver.get(config.getProperty("testsiteurl"));
+        wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(OR.getProperty("bmlBtn_CSS")))).click();
         ExtentStepLogger.logTestStart("All Combinations Test", "Test all possible customer and currency combinations");
         
         try {
@@ -127,6 +142,8 @@ public class OpenAccountTest extends TestBase {
                     // Submit form
                     WebElement processButton = driver.findElement(By.cssSelector(OR.getProperty("process_CSS")));
                     wait.until(ExpectedConditions.elementToBeClickable(processButton)).click();
+                    Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+                    alert.accept();
                     
                     ExtentStepLogger.logPass("Successfully tested combination: " + customer + " + " + currency);
                     
